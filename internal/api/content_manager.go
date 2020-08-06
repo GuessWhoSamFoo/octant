@@ -9,6 +9,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	ocontext "github.com/vmware-tanzu/octant/internal/context"
+	oevent "github.com/vmware-tanzu/octant/pkg/event"
 	"strings"
 	"time"
 
@@ -112,6 +114,8 @@ func (cm *ContentManager) runUpdate(state octant.State, s OctantClient) PollerFu
 		if contentPath == "" {
 			return false
 		}
+
+		ctx = ocontext.WithWebsocketClientID(ctx, s.ID())
 
 		content, _, err := cm.contentGenerateFunc(ctx, state)
 		if err != nil {
@@ -240,8 +244,8 @@ type notFound interface {
 }
 
 // CreateContentEvent creates a content event.
-func CreateContentEvent(contentResponse component.ContentResponse, namespace, contentPath string, queryParams map[string][]string) octant.Event {
-	return octant.Event{
+func CreateContentEvent(contentResponse component.ContentResponse, namespace, contentPath string, queryParams map[string][]string) oevent.Event {
+	return oevent.Event{
 		Type: octant.EventTypeContent,
 		Data: map[string]interface{}{
 			"content":     contentResponse,
