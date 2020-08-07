@@ -6,9 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 package service
 
 import (
-	"fmt"
 	"context"
-	ocontext "github.com/vmware-tanzu/octant/internal/context"
 	"path"
 	"strings"
 
@@ -157,6 +155,7 @@ type PrintRequest struct {
 
 	DashboardClient Dashboard
 	Object          runtime.Object
+	ClientID		string
 }
 
 // ActionRequest is a request for actions.
@@ -166,6 +165,7 @@ type ActionRequest struct {
 	DashboardClient Dashboard
 	ActionName      string
 	Payload         action.Payload
+	ClientID		string
 }
 
 // NavigationRequest is a request for navigation.
@@ -173,6 +173,7 @@ type NavigationRequest struct {
 	baseRequest
 
 	DashboardClient Dashboard
+	ClientID 		string
 }
 
 type HandlerPrinterFunc func(request *PrintRequest) (plugin.PrintResponse, error)

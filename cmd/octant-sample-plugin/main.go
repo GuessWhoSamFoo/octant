@@ -7,7 +7,6 @@ package main
 
 import (
 	"fmt"
-	ocontext "github.com/vmware-tanzu/octant/internal/context"
 	"log"
 	"time"
 
@@ -72,7 +71,6 @@ func handleTab(request *service.PrintRequest) (plugin.TabResponse, error) {
 	// start a new row.
 	layout := flexlayout.New()
 	section := layout.AddSection()
-
 	// Octant contains a library of components that can be used to display content.
 	// This example uses markdown text.
 	contents := component.NewMarkdownText("content from a *plugin*")
@@ -117,7 +115,7 @@ func handlePrint(request *service.PrintRequest) (plugin.PrintResponse, error) {
 
 	// Octant has a component library that can be used to build content for a plugin.
 	// In this case, the plugin is creating a card.
-	podCard := component.NewCard(component.TitleFromString(fmt.Sprintf("Extra Output for %s", ocontext.WebsocketClientIDFrom(request.Context()))))
+	podCard := component.NewCard(component.TitleFromString(fmt.Sprintf("Extra Output for %s", string(request.ClientID))))
 	podCard.SetBody(component.NewMarkdownText("This output was generated from _octant-sample-plugin_"))
 
 	msg := fmt.Sprintf("update from plugin at %s", time.Now().Format(time.RFC3339))
