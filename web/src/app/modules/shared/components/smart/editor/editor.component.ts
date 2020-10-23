@@ -8,6 +8,7 @@ import { EditorView } from '../../../models/content';
 import { NamespaceService } from '../../../services/namespace/namespace.service';
 import { ActionService } from '../../../services/action/action.service';
 import { AbstractViewComponent } from '../../abstract-view/abstract-view.component';
+import { ElectronService } from '../../../services/electron/electron.service';
 
 interface Options {
   readOnly: boolean;
@@ -31,6 +32,7 @@ export class EditorComponent extends AbstractViewComponent<EditorView> {
     return this.editorValue;
   }
 
+  private _webview: any;
   private editorValue: string;
   private pristineValue: string;
   uri: string;
@@ -45,7 +47,8 @@ export class EditorComponent extends AbstractViewComponent<EditorView> {
 
   constructor(
     private namespaceService: NamespaceService,
-    private actionService: ActionService
+    private actionService: ActionService,
+    private electronService: ElectronService
   ) {
     super();
 

@@ -11,7 +11,7 @@ import (
 )
 
 func platformWindowOptions(in astilectron.WindowOptions) astilectron.WindowOptions {
-	in.Frame = astikit.BoolPtr(false)
+	in.Frame = astikit.BoolPtr(true)
 
 	return in
 }

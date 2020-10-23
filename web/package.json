@@ -1,5 +1,7 @@
 {
   "name": "dash-frontend",
+  "description": "test",
+  "author": "vmware-tanzu",
   "version": "0.0.0",
   "main": "main.js",
   "scripts": {
@@ -13,6 +15,9 @@
     "prettier": "prettier --write \"src/{app,environments,assets}/**/*{.ts,.js,.json,.css,.scss}\"",
     "electron:serve": "wait-on http-get://localhost:7777 && npm run electron:serve-tsc && electron . --serve",
     "electron:serve-tsc": "tsc -p tsconfig-serve.json",
+    "electron:local": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder -p never",
     "//": [
       "switch to tsconfig.json below once compodoc angular 9 bug is fixed (https://github.com/compodoc/compodoc/issues/951)",
       "see also https://github.com/compodoc/compodoc/issues/927#issuecomment-597624654"
@@ -30,6 +35,9 @@
   },
   "build": {
     "appId": "com.vmware.tanzu.octant"
+  },
+  "publish": {
+    "provider": "github"
   },
   "private": true,
   "dependencies": {

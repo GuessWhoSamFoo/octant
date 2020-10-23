@@ -69,7 +69,7 @@ func run(ctx context.Context) error {
 	}
 
 	viper.Set("disable-open-browser", true)
-	viper.Set("proxy-frontend", "http://localhost:4200")
+	// viper.Set("proxy-frontend", "http://localhost:4200")
 
 	// TODO: this port should be random.
 	viper.Set(api.ListenerAddrKey, "127.0.0.1:7778")

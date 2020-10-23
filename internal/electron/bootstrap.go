@@ -33,6 +33,8 @@ func dimensionsWindowOptions(in astilectron.WindowOptions) astilectron.WindowOpt
 func initWindows(ctx context.Context, a *astilectron.Astilectron, appURL string, listener MessageListener, logger astikit.SeverityLogger) ([]*astilectron.Window, error) {
 	windowOptions := astilectron.WindowOptions{
 		Center: astikit.BoolPtr(true),
+		// Frame:  astikit.BoolPtr(true),
+		// TitleBarStyle: astilectron.TitleBarStyleDefault,
 	}
 
 	windowOptions = dimensionsWindowOptions(windowOptions)
