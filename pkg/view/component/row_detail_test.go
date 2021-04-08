@@ -13,11 +13,13 @@ import (
 
 func TestTableRow_AddExpandableDetail(t *testing.T) {
 	text := NewText("detail")
-	expected := NewExpandableRowDetail(text, true)
+	expected := NewExpandableRowDetail(text)
+	expected.setReplace(true)
 	row := TableRow{
 		"abc": NewText("123"),
 	}
-	row.AddExpandableDetail(text, true)
+	row.AddExpandableDetail(text)
+	row.setReplace(true)
 
 	require.Equal(t, expected, row[ExpandableRowKey])
 }
@@ -32,8 +34,12 @@ func TestTableTow_ExpandableDetail_Marshal(t *testing.T) {
 		{
 			name: "in general",
 			input: &ExpandableRowDetail{
-				Base:   newBase(TypeExpandableRowDetail, nil),
-				Config: ExpandableDetailConfig{Body: NewText("test")},
+				Base: newBase(TypeExpandableRowDetail, nil),
+				Config: ExpandableDetailConfig{
+					Body: []Component{
+						NewText("test"),
+					},
+				},
 			},
 			expectedPath: "expandable_row.json",
 		},
