@@ -46,9 +46,20 @@
     <clr-dg-cell *ngFor="let column of columns; trackBy: identifyColumn">
       <app-view-container [view]="row.data[column]"></app-view-container>
     </clr-dg-cell>
-    <ng-container ngProjectAs="clr-dg-row-detail" *ngIf="row?.expandedDetail">
+    <!-- expandedDetails-->
+    <ng-container ngProjectAs="clr-dg-row-detail" *ngIf="row?.expandedDetails">
       <clr-dg-row-detail *clrIfExpanded [clrDgReplace]="row?.replace">
-        <app-view-container [view]="row.expandedDetail"></app-view-container>
+        <!-- Many dg-cell -->
+        <ng-template [ngIf]="row.expandedDetails.length > 1" [ngIfElse]="loading">
+          <clr-dg-cell *ngFor="let detail of row.expandedDetails">
+            <app-view-container [view]="detail"></app-view-container>
+          </clr-dg-cell>
+        </ng-template>
+
+        <!-- If not dg-cell -->
+        <ng-template #loading>
+          <app-view-container [view]="row.expandedDetails[0]"></app-view-container>
+        </ng-template>
       </clr-dg-row-detail>
     </ng-container>
   </clr-dg-row>
