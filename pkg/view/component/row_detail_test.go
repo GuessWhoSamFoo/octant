@@ -12,16 +12,39 @@ import (
 )
 
 func TestTableRow_AddExpandableDetail(t *testing.T) {
-	text := NewText("detail")
-	expected := NewExpandableRowDetail(text)
-	expected.setReplace(true)
-	row := TableRow{
-		"abc": NewText("123"),
+	cases := []struct {
+		name     string
+		row      TableRow
+		details  *ExpandableRowDetail
+		expected *ExpandableRowDetail
+	}{
+		{
+			name: "one detail",
+			row: TableRow{
+				"abc": NewText("124"),
+			},
+			details:  NewExpandableRowDetail(NewText("detail")),
+			expected: NewExpandableRowDetail(NewText("detail")),
+		},
+		{
+			name: "multiple details",
+			row: TableRow{
+				"abc": NewText("124"),
+			},
+			details: NewExpandableRowDetail([]Component{
+				NewText("detail"),
+				NewText("detail 2"),
+			}...),
+			expected: NewExpandableRowDetail(NewText("detail"), NewText("detail 2")),
+		},
 	}
-	row.AddExpandableDetail(text)
-	row.setReplace(true)
 
-	require.Equal(t, expected, row[ExpandableRowKey])
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			tc.row.AddExpandableDetail(tc.details)
+			require.Equal(t, tc.expected, tc.row[ExpandableRowKey])
+		})
+	}
 }
 
 func TestTableTow_ExpandableDetail_Marshal(t *testing.T) {

@@ -10,21 +10,8 @@ const (
 )
 
 // AddExpandableDetail allows a row to be expandable
-func (t TableRow) AddExpandableDetail(body ...Component) {
-	er, ok := t[ExpandableRowKey].(*ExpandableRowDetail)
-	if !ok {
-		er = NewExpandableRowDetail(body...)
-	}
-	t[ExpandableRowKey] = er
-}
-
-func (t TableRow) setReplace(replace bool) {
-	er, ok := t[ExpandableRowKey].(*ExpandableRowDetail)
-	if !ok {
-		return
-	}
-
-	er.Config.Replace = replace
+func (t TableRow) AddExpandableDetail(details *ExpandableRowDetail) {
+	t[ExpandableRowKey] = details
 }
 
 // ExpandableRowDetail is a component hidden by a toggle under each table row.
@@ -84,7 +71,7 @@ func NewExpandableRowDetail(body ...Component) *ExpandableRowDetail {
 	return &e
 }
 
-func (e *ExpandableRowDetail) setReplace(replace bool) {
+func (e *ExpandableRowDetail) SetReplace(replace bool) {
 	e.Config.Replace = replace
 }
 
