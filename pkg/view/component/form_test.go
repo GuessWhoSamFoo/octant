@@ -11,6 +11,21 @@ import (
 	"github.com/vmware-tanzu/octant/internal/testutil"
 )
 
+func TestFormFieldLayout_UnmarshalJSON(t *testing.T) {
+	textFieldOne := NewFormFieldText("Test Horizontal", "Test Horizontal", "")
+	textFieldTwo := NewFormFieldText("Cluster Name", "clusterName", "")
+	expected := NewFormFieldLayout("", []FormField{textFieldOne, textFieldTwo})
+
+	data, err := json.Marshal(&expected)
+	require.NoError(t, err)
+
+	var got FormFieldLayout
+
+	require.NoError(t, json.Unmarshal(data, &got))
+
+	assertFormFieldEqual(t, expected, &got)
+}
+
 func TestFormFieldCheckBox_UnmarshalJSON(t *testing.T) {
 	choices := []InputChoice{
 		{Label: "foo", Value: "foo", Checked: false},
