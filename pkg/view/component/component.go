@@ -6,6 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 package component
 
 import (
+	"fmt"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 
@@ -58,8 +59,9 @@ func (c *ContentResponse) AddButton(name string, payload action.Payload, buttonO
 // UnmarshalJSON unmarshals a content response from JSON.
 func (c *ContentResponse) UnmarshalJSON(data []byte) error {
 	stage := struct {
-		Title      []TypedObject `json:"title,omitempty"`
-		Components []TypedObject `json:"viewComponents,omitempty"`
+		Title       []TypedObject `json:"title,omitempty"`
+		Components  []TypedObject `json:"viewComponents,omitempty"`
+		ButtonGroup *TypedObject  `json:"buttonGroup,omitempty"`
 	}{}
 
 	if err := json.Unmarshal(data, &stage); err != nil {
@@ -78,6 +80,19 @@ func (c *ContentResponse) UnmarshalJSON(data []byte) error {
 		}
 
 		c.Title = append(c.Title, titleComponent)
+	}
+
+	if stage.ButtonGroup != nil {
+		component, err := stage.ButtonGroup.ToComponent()
+		if err != nil {
+			return err
+		}
+
+		buttonGroup, ok := component.(*ButtonGroup)
+		if !ok {
+			return fmt.Errorf("item was not a buttonGroup")
+		}
+		c.ButtonGroup = buttonGroup
 	}
 
 	for _, to := range stage.Components {

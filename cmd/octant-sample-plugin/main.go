@@ -230,6 +230,7 @@ func initRoutes(router *service.Router) {
 
 		contentResponse := component.NewContentResponse(title)
 		contentResponse.Add(component1, component2)
+		contentResponse.AddButton("Testing", action.Payload{})
 
 		return *contentResponse, nil
 	})
