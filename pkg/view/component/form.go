@@ -22,6 +22,7 @@ const (
 	FieldTypeSelect   = "select"
 	FieldTypeTextarea = "textarea"
 	FieldTypeHidden   = "hidden"
+	FieldTypeLayout   = "layout"
 )
 
 type FormValidator string
@@ -115,6 +116,126 @@ func marshalFormField(ff FormField) ([]byte, error) {
 	}
 
 	return json.Marshal(&m)
+}
+
+type FormFieldLayout struct {
+	*BaseFormField
+	value  string
+	fields []FormField
+}
+
+type RowSize string
+
+const (
+	RowSizeOne    RowSize = "grid cols@xs:1 gap:lg"
+	RowSizeTwo    RowSize = "grid cols@xs:2 gap:lg"
+	RowSizeThree  RowSize = "grid cols@xs:3 gap:lg"
+	RowSizeFour   RowSize = "grid cols@xs:4 gap:lg"
+	RowSizeFive   RowSize = "grid cols@xs:5 gap:lg"
+	RowSizeSix    RowSize = "grid cols@xs:6 gap:lg"
+	RowSizeSeven  RowSize = "grid cols@xs:7 gap:lg"
+	RowSizeEight  RowSize = "grid cols@xs:8 gap:lg"
+	RowSizeNine   RowSize = "grid cols@xs:9 gap:lg"
+	RowSizeTen    RowSize = "grid cols@xs:10 gap:lg"
+	RowSizeEleven RowSize = "grid cols@xs:11 gap:lg"
+	RowSizeTwelve RowSize = "grid cols@xs:12 gap:lg"
+)
+
+func NewFormFieldLayout(value RowSize, fields []FormField) *FormFieldLayout {
+	return &FormFieldLayout{
+		BaseFormField: newBaseFormField("", "", FieldTypeLayout),
+		value:         string(value),
+		fields:        fields,
+	}
+}
+
+func (ff *FormFieldLayout) SetLabel(value string) {
+	ff.label = value
+}
+
+func (ff *FormFieldLayout) MarshalJSON() ([]byte, error) {
+	return marshalFormField(ff)
+}
+
+func (ff *FormFieldLayout) Configuration() map[string]interface{} {
+	return map[string]interface{}{
+		"fields": ff.fields,
+	}
+}
+
+func (ff *FormFieldLayout) Value() interface{} {
+	return ff.value
+}
+
+func (ff *FormFieldLayout) UnmarshalJSON(data []byte) error {
+	x := struct {
+		Label         string                        `json:"label"`
+		Name          string                        `json:"name"`
+		Type          string                        `json:"type"`
+		Error         string                        `json:"error"`
+		Value         string                        `json:"value"`
+		Validators    map[FormValidator]interface{} `json:"validators"`
+		Configuration struct {
+			Fields []struct {
+				Label         string                 `json:"label"`
+				Name          string                 `json:"name"`
+				Type          string                 `json:"type"`
+				Configuration map[string]interface{} `json:"configuration"`
+				Value         interface{}            `json:"value"`
+				Placeholder   string                 `json:"placeholder"`
+				Error         string                 `json:"error"`
+				Validators    map[string]interface{} `json:"validators"`
+			} `json:"fields"`
+		} `json:"configuration"`
+	}{}
+
+	if err := json.Unmarshal(data, &x); err != nil {
+		return err
+	}
+
+	ff.BaseFormField = newBaseFormField(x.Label, x.Name, x.Type)
+	ff.errorMessage = x.Error
+	ff.validators = x.Validators
+	ff.value = x.Value
+
+	for i := range x.Configuration.Fields {
+		field := x.Configuration.Fields[i]
+		var fftmp FormField
+
+		fieldData, err := json.Marshal(field)
+		if err != nil {
+			return err
+		}
+
+		switch field.Type {
+		case FieldTypeCheckBox:
+			fftmp = &FormFieldCheckBox{}
+		case FieldTypeRadio:
+			fftmp = &FormFieldRadio{}
+		case FieldTypeText:
+			fftmp = &FormFieldText{}
+		case FieldTypePassword:
+			fftmp = &FormFieldPassword{}
+		case FieldTypeNumber:
+			fftmp = &FormFieldNumber{}
+		case FieldTypeSelect:
+			fftmp = &FormFieldSelect{}
+		case FieldTypeTextarea:
+			fftmp = &FormFieldTextarea{}
+		case FieldTypeHidden:
+			fftmp = &FormFieldHidden{}
+		default:
+			return errors.Errorf("unknown form field type %q", field)
+		}
+
+		if err := fftmp.UnmarshalJSON(fieldData); err != nil {
+			return err
+		}
+
+		ff.fields = append(ff.fields, fftmp)
+	}
+
+	return nil
 }
 
 type FormFieldCheckBox struct {
@@ -702,6 +823,8 @@ func (f *Form) UnmarshalJSON(data []byte) error {
 			ff = &FormFieldTextarea{}
 		case FieldTypeHidden:
 			ff = &FormFieldHidden{}
+		case FieldTypeLayout:
+			ff = &FormFieldLayout{}
 		default:
 			return errors.Errorf("unknown form field type %q", field)
 		}
