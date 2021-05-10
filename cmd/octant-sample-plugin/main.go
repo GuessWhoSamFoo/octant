@@ -191,19 +191,40 @@ func handleAction(request *service.ActionRequest) error {
 // that will return the content for every single path.
 func initRoutes(router *service.Router) {
 	gen := func(name, accessor, requestPath string) component.Component {
-		cardBody := component.NewText(fmt.Sprintf("hello from plugin: path %s", requestPath))
+		//cardBody := component.NewText(fmt.Sprintf("hello from plugin: path %s", requestPath))
 		card := component.NewCard(component.TitleFromString(fmt.Sprintf("My Card - %s", name)))
-		card.SetBody(cardBody)
+		//card.SetBody(cardBody)
 
 		form := component.Form{Fields: []component.FormField{
 			component.NewFormFieldHidden("action", pluginActionName),
+			component.NewFormFieldText("foo", "bar", "test"),
+			component.NewFormFieldNumber("number", "number", "100"),
+			component.NewFormFieldCheckBox("checkbox", "checkbox", []component.InputChoice{
+				{
+					Label: "a",
+					Value: "a",
+				},
+				{
+					Label: "b",
+					Value: "b",
+				},
+				{
+					Label: "c",
+					Value: "c",
+				},
+			}),
 		}}
-		testButton := component.Action{
-			Name:  "Test Button",
-			Title: "Test Button",
-			Form:  form,
-		}
-		card.AddAction(testButton)
+		modal := component.NewModal(component.TitleFromString("Test"))
+		button := component.NewButton("Test", action.Payload{})
+		modal.AddForm(form)
+		button.Config.Modal = modal
+		//testButton := component.Action{
+		//	Name:  "Test Button",
+		//	Title: "Test Button",
+		//	Form:  form,
+		//}
+		// card.AddAction(testButton)
+		card.SetBody(button)
 		cardList := component.NewCardList(name)
 		cardList.AddCard(*card)
 		cardList.SetAccessor(accessor)

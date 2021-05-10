@@ -4,6 +4,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { ActionField } from './content';
 
 export interface Choice {
   label: string;
@@ -33,8 +34,8 @@ export class FormHelper {
 
     const controls: { [name: string]: any } = {};
     form.fields.forEach(field => {
-      if (field.type === 'layout') {
-        field.configuration.fields.forEach(f => {
+      if (field?.config.type === 'layout') {
+        field?.config.configuration.fields.forEach(f => {
           this.createControls(controls, f);
         });
       } else {
@@ -45,7 +46,7 @@ export class FormHelper {
   }
 
   createControls(controls: { [name: string]: any }, field) {
-    controls[field.name] = [
+    controls[field.config.name] = [
       this.transformValue(field),
       this.getValidators(field.validators),
     ];
@@ -61,14 +62,15 @@ export class FormHelper {
     }
   }
 
-  transformValue(field): any {
-    if (field.type === 'number') {
-      if (field.value === '') {
+  transformValue(field: ActionField): any {
+    if (field.config.type === 'number') {
+      if (field.config.value === '') {
         return null;
       }
-      const value = +field.value;
+      const value = +field.config.value;
       return Number.isNaN(value) ? 0 : value;
     }
+    return field.config.value;
   }
 
   // Receive a hash with the validation name and the expected

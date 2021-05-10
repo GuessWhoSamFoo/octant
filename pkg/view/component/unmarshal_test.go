@@ -223,6 +223,25 @@ func Test_unmarshal(t *testing.T) {
 			},
 		},
 		{
+			name:       "form field",
+			configFile: "config_form_text.json",
+			objectType: TypeFormField,
+			expected: &FormField{
+				Base: newBase(TypeFormField, nil),
+				Config: FormFieldConfig{
+					Type:        FieldTypeText,
+					Label:       "label",
+					Name:        "name",
+					Value:       "value",
+					Placeholder: "placeholder",
+					Error:       "error message",
+					Validators: map[FormValidator]interface{}{
+						FormValidatorMaxLength: 100,
+					},
+				},
+			},
+		},
+		{
 			name:       "grid actions",
 			configFile: "config_grid_actions.json",
 			objectType: TypeGridActions,

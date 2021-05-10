@@ -77,7 +77,7 @@ export class StepperComponent
   }
 
   fieldChoices(field: ActionField) {
-    return field.configuration.choices as Choice[];
+    return field.config.configuration.choices as Choice[];
   }
 
   formGroupFromName(step: StepItem): FormGroup {

@@ -42,7 +42,7 @@ export class FormViewContainerComponent implements OnInit {
   }
 
   fieldChoices(field: ActionField) {
-    return field.configuration.choices as Choice[];
+    return field.config.configuration.choices as Choice[];
   }
 
   isInvalid(fieldName: string) {
